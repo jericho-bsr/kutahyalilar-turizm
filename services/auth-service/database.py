@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Docker-compose dosyamızdaki veritabanı bilgileri
 # localhost yerine 127.0.0.1 ve 5432 yerine 5433 yazıyoruz
-SQLALCHEMY_DATABASE_URL = "postgresql://kturizm_admin:secretpassword@127.0.0.1:5433/kturizm_db"
+SQLALCHEMY_DATABASE_URL = "postgresql://kturizm_admin:secretpassword@kturizm-postgres:5432/kturizm_db"
 
 # Veritabanı motorunu oluşturuyoruz
 engine = create_engine(SQLALCHEMY_DATABASE_URL)

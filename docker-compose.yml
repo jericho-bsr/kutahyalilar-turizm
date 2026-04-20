@@ -23,7 +23,7 @@ services:
       - "6379:6379"
     restart: always
 
-  # Servisler arası asenkron iletişim (örn: bilet alınca bildirime gitmesi) için Kafka & Zookeeper
+  # Servisler arası asenkron iletişim için Kafka & Zookeeper
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
     container_name: kturizm-zookeeper
@@ -43,8 +43,55 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # BİZİM YAZDIĞIMIZ MİKROSERVİSLER
+  auth-service:
+    build: ./services/auth-service
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./services/auth-service:/app
+    depends_on:
+      - postgres
+
+  trip-service:
+    build: ./services/trip-service
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+    volumes:
+      - ./services/trip-service:/app
+    depends_on:
+      - postgres
+
+  booking-service:
+    build: ./services/booking-service
+    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+    volumes:
+      - ./services/booking-service:/app
+    depends_on:
+      - postgres
+
+  api-gateway:
+    build: ./services/api-gateway
+    command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+    ports:
+      - "8080:8080" # Sadece Gateway dışarıya açık
+    volumes:
+      - ./services/api-gateway:/app
+
+
+
+
+  notification-service:
+    build: ./services/notification-service
+    volumes:
+      - ./services/notification-service:/app
+    depends_on:
+      - kafka
+
+
+
 
 volumes:
   postgres_data:

@@ -16,6 +16,11 @@ app = FastAPI(
 def ana_sayfa():
     return {"mesaj": "Auth Service veritabanına bağlandı! 🚀", "durum": "aktif"}
 
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
 # --- KAYIT OLMA (REGISTER) ---
 @app.post("/register", response_model=schemas.UserResponse)
 def register_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):

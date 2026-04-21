@@ -10,6 +10,10 @@ Bu proje, modern mikroservis mimarisi ile tasarlanmış bir otobüs biletleme si
 - **Message Broker:** Kafka & Zookeeper (Bilet onaylarında asenkron mail/sms bildirimi)
 - **DevOps:** Docker, Docker Compose, Kubernetes (K8s)
 
+## 📌 Versiyon Geçmişi (Versioning)
+- **v1.0.0:** Temel mikroservis altyapısı, backend API endpoint'leri ve basit veritabanı entegrasyonu.
+- **v2.0.0:** Next.js ile tamamen dinamik (2+1 koltuk seçimi) frontend arayüzü eklendi. Redis Cache ve Kafka Message Queue sistemleri entegre edildi. Kubernetes Deployment dosyaları tamamlandı.
+
 ## 🏗 Mimari Yapı
 
 Proje toplam 6 mikroservis ve 1 API Gateway içermektedir. Frontend, tüm isteklerini Gateway üzerinden yapar.

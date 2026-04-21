@@ -50,48 +50,70 @@ services:
   # BİZİM YAZDIĞIMIZ MİKROSERVİSLER
   auth-service:
     build: ./services/auth-service
+    container_name: kutahyalilar-turizm-auth-service
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./services/auth-service:/app
     depends_on:
       - postgres
+      - redis
 
   trip-service:
     build: ./services/trip-service
+    container_name: kutahyalilar-turizm-trip-service
     command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
     volumes:
       - ./services/trip-service:/app
     depends_on:
       - postgres
+      - redis
 
   booking-service:
     build: ./services/booking-service
+    container_name: kutahyalilar-turizm-booking-service
     command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
     volumes:
       - ./services/booking-service:/app
     depends_on:
       - postgres
+      - kafka
 
-  api-gateway:
-    build: ./services/api-gateway
-    command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
-    ports:
-      - "8080:8080" # Sadece Gateway dışarıya açık
+  payment-service:
+    build: ./services/payment-service
+    container_name: kutahyalilar-turizm-payment-service
+    command: uvicorn main:app --host 0.0.0.0 --port 8003 --reload
     volumes:
-      - ./services/api-gateway:/app
+      - ./services/payment-service:/app
+    ports:
+      - "8003:8003"
 
-
-
+  user-service:
+    build: ./services/user-service
+    container_name: kutahyalilar-turizm-user-service
+    command: uvicorn main:app --host 0.0.0.0 --port 8004 --reload
+    volumes:
+      - ./services/user-service:/app
+    depends_on:
+      - postgres
+    ports:
+      - "8004:8004"
 
   notification-service:
     build: ./services/notification-service
+    container_name: kutahyalilar-turizm-notification-service
     volumes:
       - ./services/notification-service:/app
     depends_on:
       - kafka
 
-
-
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: kutahyalilar-turizm-api-gateway
+    command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./services/api-gateway:/app
 
 volumes:
   postgres_data:

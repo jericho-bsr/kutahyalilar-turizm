@@ -27,6 +27,8 @@ SERVICES = {
     "auth": "http://auth-service:8000",
     "trips": "http://trip-service:8001",
     "bookings": "http://booking-service:8002",
+    "payments": "http://payment-service:8003",
+    "users": "http://user-service:8004",
 }
 
 @app.get("/")

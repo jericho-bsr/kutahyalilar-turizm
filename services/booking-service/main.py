@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from kafka import KafkaProducer
 import json
+import urllib.request
+import urllib.error
 import models, database, schemas, auth
 
 models.Base.metadata.create_all(bind=database.engine)
@@ -36,7 +38,28 @@ def create_booking(
     db: Session = Depends(database.get_db),
     user_email: str = Depends(auth.get_current_user_email)
 ):
-    # 1. Bileti Veritabanına Kaydet
+    # 1. Koltuk Müsaitliğini Kontrol Et ve Rezerve Et (Trip Service API Çağrısı)
+    try:
+        req = urllib.request.Request(
+            f"http://trip-service:8001/trips/{booking.trip_id}/reserve-seat",
+            data=json.dumps({"koltuk_no": booking.koltuk_no}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req) as response:
+            pass # Başarılıysa devam et, koltuk ayrıldı
+    except urllib.error.HTTPError as e:
+        if e.code == 400:
+            err_data = json.loads(e.read().decode("utf-8"))
+            raise HTTPException(status_code=400, detail=err_data.get("detail", "Koltuk rezerve edilemedi."))
+        elif e.code == 404:
+            raise HTTPException(status_code=404, detail="Sefer bulunamadı.")
+        else:
+            raise HTTPException(status_code=500, detail="Trip servisiyle iletişim kurulamadı.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"İç hata: {str(e)}")
+
+    # 2. Bileti Veritabanına Kaydet
     yeni_bilet = models.Booking(
         kullanici_email=user_email, 
         trip_id=booking.trip_id,

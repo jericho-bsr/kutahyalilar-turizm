@@ -41,9 +41,9 @@ export function Navbar() {
         </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
-            <Link href="/trips">
+            <Link href={isLoggedIn ? "/profile" : "/trips"}>
               <Button variant="ghost" className="text-sm font-medium transition-colors hover:text-primary">
-                Seferler
+                {isLoggedIn ? "Seferlerim" : "Seferler"}
               </Button>
             </Link>
             {isLoggedIn ? (

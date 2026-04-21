@@ -17,7 +17,7 @@ class TripResponse(BaseModel):
     kalkis_zamani: datetime
     fiyat: float
     toplam_koltuk: int
-    dolu_koltuklar: List[int] = []
+    dolu_koltuklar: Optional[List[int]] = []
     otobus_plakasi: Optional[str] = None
 
     class Config:
